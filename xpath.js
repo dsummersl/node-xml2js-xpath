@@ -2,7 +2,7 @@ var _ = require("lodash");
 var xml2js = require("xml2js");
 
 // Given a JSON document returned by xml2js (with _ and $ keys), return the
-// combined text value of a tag.
+// combined text value of the tags.
 var jsonText = function(json) {
 	if (_.isString(json)) {
 		return json;
@@ -25,29 +25,6 @@ var jsonText = function(json) {
 		}
 	}).value();
 	return result;
-}
-
-var builder = new xml2js.Builder({
-	headless: true,
-	// silly indenting to match our old libxmljs style indenting.
-	renderOpts: { 'pretty': true, 'indent': '    ', 'newline': '\n          ' }
-});
-
-// Given a dictionary from xml2js list, return its String equivalent.
-var jsonToXML = function(rootName, json) {
-	if (_.isArray(json) && json.length == 0) {
-		return "";
-	}
-	if (!json || !rootName) {
-	  return "";
-	}
-	try {
-		var rooted = {};
-		rooted[rootName] = json;
-		return builder.buildObject(rooted);
-	} catch(e) {
-		return "";
-	}
 };
 
 var findAllKeys = function(json, key, matches) {
@@ -99,7 +76,7 @@ var findAllProperties = function(json, property, matches) {
 //  * //Element[@id='4']/@property
 //
 // Returns an array of matches.
-var findXPath = function(json, path) {
+var find = function(json, path) {
 	if (path === "") {
 		if (!_.isArray(json)) {
 			return [json];
@@ -116,7 +93,7 @@ var findXPath = function(json, path) {
 		var value = match[3];
 		if (node in json && "$" in json[node]) {
 			if (key in json[node].$ && json[node].$[key] === value) {
-				return findXPath(json[node],path.replace(/^\/(\w+)\[@(\w+)='(\w+)'\]/,""))
+				return find(json[node],path.replace(/^\/(\w+)\[@(\w+)='(\w+)'\]/,""))
 			}
 		}
 	}
@@ -137,7 +114,7 @@ var findXPath = function(json, path) {
 		});
 		var results = [];
 		_.forEach(matches, function(value) {
-			var matches = findXPath(value, newPath);
+			var matches = find(value, newPath);
 			results = results.concat(matches);
 		});
 		return results;
@@ -150,7 +127,7 @@ var findXPath = function(json, path) {
 		var matches = findAllKeys(json, match[1], []);
 		var results = [];
 		_.forEach(matches, function(value) {
-			var matches = findXPath(value, newPath);
+			var matches = find(value, newPath);
 			results = results.concat(matches);
 		});
 		return results;
@@ -158,7 +135,7 @@ var findXPath = function(json, path) {
 	match = path.match(/^\/(\w+)/);
 	if (match) {
 		if (match[1] in json) {
-			return findXPath(json[match[1]],path.replace(/^\/\w+/,""))
+			return find(json[match[1]],path.replace(/^\/\w+/,""))
 		}
 	}
 	match = path.match(/^\/\/@(\w+)/);
@@ -169,7 +146,7 @@ var findXPath = function(json, path) {
 		var matches = findAllProperties(json, match[1], []);
 		var results = [];
 		_.forEach(matches, function(value) {
-			var matches = findXPath(value, newPath);
+			var matches = find(value, newPath);
 			results = results.concat(matches);
 		});
 		return results;
@@ -195,7 +172,7 @@ var findXPath = function(json, path) {
 	return [];
 };
 
-// Use findXPath to search a JSON object.
+// Use find to search a JSON object.
 //
 // Parameters:
 //  * json  = the JSON document to search (genearted by xml2js)
@@ -205,8 +182,8 @@ var findXPath = function(json, path) {
 //
 // Returns a node (one with no attributes and a null value if no match)
 // If more than one match is found, the first is returned.
-var findJsonPath = function(json, path, fetch) {
-	var matches = findXPath(json, path);
+var evalFirst = function(json, path, fetch) {
+	var matches = find(json, path);
 	if (matches.length === 0) {
 		if (fetch) {
 			return undefined;
@@ -230,7 +207,6 @@ var findJsonPath = function(json, path, fetch) {
 	return matches;
 };
 
-module.exports.findJsonPath = findJsonPath;
-module.exports.findXPath = findXPath;
+module.exports.evalFirst = evalFirst;
+module.exports.find = find;
 module.exports.jsonText = jsonText;
-module.exports.jsonToXML = jsonToXML;

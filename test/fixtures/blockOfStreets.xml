@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Root xmlns:xsi="http://xmlns.com">
+	<Street id="9th St">
+		<Wrapper>
+			<Blocks>9</Blocks>
+			<URLS>
+				<URL><![CDATA[http://serverland.net/ad/tag/parameters?time=1234567]]></URL>
+			</URLS>
+			<CDATAURLS>
+				<URL id="firstone">
+					<![CDATA[http://www.primarysite.com/tracker?imp]]>
+				</URL>
+			</CDATAURLS>
+			<TrackingEvents>
+				<Tracking event="start">
+					<URL id="number0">
+						<![CDATA[http://serverland.net/ad/start]]>
+					</URL>
+					</Tracking>
+				<Tracking event="midpoint">
+					<URL id="number1">
+						<![CDATA[http://serverland.net/ad/midpoint]]>
+					</URL>
+				</Tracking>
+				<Tracking event="complete">
+					<URL id="number2">
+						<![CDATA[http://serverland.net/ad/complete]]>
+					</URL>
+				</Tracking>
+			</TrackingEvents>
+		</Wrapper>
+	</Street>
+</Root>

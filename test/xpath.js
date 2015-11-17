@@ -160,5 +160,13 @@ describe("xpath", function() {
 			});
 		});
 
+    it('can find /vast/nest/val', function(done) {
+			parseString('<vast><nest><val>2</val></nest></vast>', function(err, json) {
+        debugger;
+				expect(xpath.find(json,'/vast/nest/val').length).to.equal(1);
+				expect(xpath.jsonText(xpath.find(json,'/vast/nest/val')[0])).to.equal('2');
+				done();
+			});
+    });
 	});
 });

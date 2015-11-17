@@ -71,9 +71,10 @@ var findAllProperties = function(json, property, matches) {
 // Perform simple search of a xml2js document with XPath.
 //
 // This function supports simple XPath queries like:
-//  * //Element/Subelement
-//  * //Element[@id='4']/Subelement
-//  * //Element[@id='4']/@property
+//	* //Element/SubElement
+//	* /Element/Subelement/SubSubElement
+//	* //Element[@id='4']/SubElement
+//	* //Element[@id='4']/@property
 //
 // Returns an array of matches.
 var find = function(json, path) {
@@ -86,6 +87,8 @@ var find = function(json, path) {
 	if (path.length > 0 && path[0] === ".") {
 		path = path.substring(1);
 	}
+
+	// match Element[@key='value']
 	var match = path.match(/^\/(\w+)\[@(\w+)='(\w+)'\]/);
 	if (match) {
 		var node = match[1];
@@ -97,6 +100,8 @@ var find = function(json, path) {
 			}
 		}
 	}
+
+	// match //Element[@key='value']
 	var match = path.match(/^\/\/(\w+)\[@(\w+)='(\w+)'\]/);
 	if (match) {
 		// see if the current dictionary has a match, for all that do not match, see
@@ -119,41 +124,29 @@ var find = function(json, path) {
 		});
 		return results;
 	}
-	match = path.match(/^\/\/(\w+)/);
-	if (match) {
-		// see if the current dictionary has a match, for all that do not match, see
-		// if their values have matches, etc...
-		var newPath = path.replace(/^\/\/(\w+)/, "");
-		var matches = findAllKeys(json, match[1], []);
-		var results = [];
-		_.forEach(matches, function(value) {
-			var matches = find(value, newPath);
-			results = results.concat(matches);
-		});
-		return results;
+
+	// match //Element
+	match = extractAllKeys(json, path, /^\/\/(\w+)/);
+	if (match !== false) {
+		return match;
 	}
-	match = path.match(/^\/(\w+)/);
-	if (match) {
-		if (match[1] in json) {
-			return find(json[match[1]],path.replace(/^\/\w+/,""))
-		}
+
+	// match /Element
+	match = extractAllKeys(json, path, /^\/(\w+)/);
+	if (match !== false) {
+		return match;
 	}
-	match = path.match(/^\/\/@(\w+)/);
-	if (match) {
-		// see if the current dictionary has a match, for all that do not match, see
-		// if their values have matches, etc...
-		var newPath = path.replace(/^\/\/@(\w+)/, "");
-		var matches = findAllProperties(json, match[1], []);
-		var results = [];
-		_.forEach(matches, function(value) {
-			var matches = find(value, newPath);
-			results = results.concat(matches);
-		});
-		return results;
+
+	// match //@property
+	match = extractAllProperties(json, path, /^\/\/@(\w+)/);
+	if (match !== false) {
+		return match;
 	}
+
+	// match /@property
 	match = path.match(/^\/@(\w+)/);
 	if (match) {
-		var matches = []
+		var matches = [];
 		_(_.keys(json)).forEach(function(key) {
 			if (_.isArray(json[key])) {
 				_.forEach(json[key], function(sub) {
@@ -172,13 +165,33 @@ var find = function(json, path) {
 	return [];
 };
 
+var extractAll = function(json, path, pattern, extractFn) {
+	var match = path.match(pattern);
+	if (match) {
+		// see if the current dictionary has a match, for all that do not match, see
+		// if their values have matches, etc...
+		var newPath = path.replace(pattern, '');
+		var matches = extractFn(json, match[1], []);
+		var results = [];
+		_.forEach(matches, function(value) {
+			var matches = find(value, newPath);
+			results = results.concat(matches);
+		});
+		return results;
+	}
+
+	return false;
+};
+var extractAllKeys = _.partialRight(extractAll,findAllKeys);
+var extractAllProperties = _.partialRight(extractAll,findAllProperties);
+
 // Use find to search a JSON object.
 //
 // Parameters:
-//  * json  = the JSON document to search (genearted by xml2js)
-//  * path  = An XPath search.
-//  * fetch = If true, run jsonText() on the output. If a string, try to return
-//            the tag property. If not supplied, return the node.
+//	* json	= the JSON document to search (genearted by xml2js)
+//	* path	= An XPath search.
+//	* fetch = If true, run jsonText() on the output. If a string, try to return
+//						the tag property. If not supplied, return the node.
 //
 // Returns a node (one with no attributes and a null value if no match)
 // If more than one match is found, the first is returned.

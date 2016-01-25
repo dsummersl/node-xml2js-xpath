@@ -7,28 +7,29 @@ var jsonText = function(json) {
 	if (_.isString(json)) {
 		return json;
 	}
-	var result = json._ || "";
-	_(_.keys(json)).forEach(function(key) {
-		if (key === "$" || key === "_")
-		{
+	var result = json._ || '';
+	_.forEach(_.keys(json),function(key) {
+		if (key === '$' || key === '_') {
 			return;
 		}
+    debugger;
 		var value = json[key];
-		if (_.isArray(value))
-		{
-			_(value).forEach(function(entry) {
+		if (_.isArray(value)) {
+			_.forEach(value,function(entry) {
 				result += jsonText(entry);
 			});
-		} else
-		{
+		} else {
 			result += jsonText(value);
 		}
-	}).value();
+	});
 	return result;
 };
 
 var findAllKeys = function(json, key, matches) {
-	_(_.keys(json)).forEach(function(jsonKey) {
+  if (_.isString(json)) {
+    return matches;
+  }
+	_.forEach(_.keys(json),function(jsonKey) {
 		if (jsonKey === '$' || jsonKey === '_') {
 			return;
 		}
@@ -43,21 +44,21 @@ var findAllKeys = function(json, key, matches) {
 		} else {
 			findAllKeys(json[jsonKey], key, matches);
 		}
-	}).value();
+	});
 	return matches;
 };
 
 var findAllProperties = function(json, property, matches) {
 	var foundMatch = false;
-	_(_.keys(json.$)).forEach(function(jsonProperty) {
+	_.forEach(_.keys(json.$),function(jsonProperty) {
 		if (property === jsonProperty && property in json.$) {
 			matches.push(json);
 			foundMatch = true;
 		}
-	}).value();
+	});
 
 	if (!foundMatch) {
-		_(_.keys(json)).forEach(function(jsonKey) {
+		_.forEach(_.keys(json),function(jsonKey) {
 			if (jsonKey === '$' || jsonKey === '_') {
 				return;
 			}
@@ -147,7 +148,7 @@ var find = function(json, path) {
 	match = path.match(/^\/@(\w+)/);
 	if (match) {
 		var matches = [];
-		_(_.keys(json)).forEach(function(key) {
+		_.forEach(_.keys(json),function(key) {
 			if (_.isArray(json[key])) {
 				_.forEach(json[key], function(sub) {
 					if (_.has(sub,"$") && match[1] in sub.$) {
@@ -159,7 +160,7 @@ var find = function(json, path) {
 					matches.push(json);
 				}
 			}
-		}).value();
+		});
 		return matches;
 	}
 	return [];

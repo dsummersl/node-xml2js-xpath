@@ -1,6 +1,6 @@
 {
   "name": "xml2js-xpath",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "description": "Search xml2js JSON documents with XPath query strings.",
   "main": "xpath.js",
   "typings": "xml2js-xpath",
@@ -24,7 +24,7 @@
   },
   "homepage": "https://github.com/dsummersl/node-xml2js-xpath",
   "dependencies": {
-    "lodash": "2.4.1",
+    "lodash": "3.10.1",
     "xml2js": "0.4.4"
   },
   "devDependencies": {

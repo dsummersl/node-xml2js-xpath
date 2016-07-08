@@ -91,27 +91,27 @@ var find = function(json, path) {
 	}
 
 	// match /Element[@key='value']
-	var match = path.match(/^\/([\w:]+)\[@([\w:]+)='(\w+)'\]/);
+	var match = path.match(/^\/([\w:]+)\[@([\w:]+)='([^']+)'\]/);
 	if (match) {
 		var node = match[1];
 		var key = match[2];
 		var value = match[3];
 		if (node in json && ATTRKEY in json[node]) {
 			if (key in json[node][ATTRKEY] && json[node][ATTRKEY][key] === value) {
-				return find(json[node],path.replace(/^\/([\w:]+)\[@([\w:]+)='(\w+)'\]/,""))
+				return find(json[node],path.replace(/^\/([\w:]+)\[@([\w:]+)='([^']+)'\]/,""))
 			}
 		}
 	}
 
 	// match //Element[@key='value']
-	var match = path.match(/^\/\/([\w:]+)\[@([\w:]+)='(\w+)'\]/);
+	var match = path.match(/^\/\/([\w:]+)\[@([\w:]+)='([^']+)'\]/);
 	if (match) {
 		// see if the current dictionary has a match, for all that do not match, see
 		// if their values have matches, etc...
 		var node = match[1];
 		var key = match[2];
 		var value = match[3];
-		var newPath = path.replace(/^\/\/([\w:]+)\[@([\w:]+)='(\w+)'\]/, "");
+		var newPath = path.replace(/^\/\/([\w:]+)\[@([\w:]+)='([^']+)'\]/, "");
 		var matches = findAllKeys(json, node, []);
 		var matches = _.filter(matches, function(val) {
 			if (ATTRKEY in val) {

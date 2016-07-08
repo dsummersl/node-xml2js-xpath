@@ -1,10 +1,14 @@
+'use strict';
+
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+
 var _ = require("lodash");
 // var xml2js = require("xml2js");
-const ATTRKEY = '$';
-const CHARKEY = '_';
+var ATTRKEY = '$';
+var CHARKEY = '_';
 // Given a JSON document returned by xml2js (with _ and $ keys), return the
 // combined text value of the tags.
-var jsonText = function (json) {
+var jsonText = function jsonText(json) {
 	if (_.isString(json)) {
 		return json;
 	}
@@ -26,7 +30,7 @@ var jsonText = function (json) {
 	return result;
 };
 
-var findAllKeys = function (json, key, matches) {
+var findAllKeys = function findAllKeys(json, key, matches) {
 	if (_.isString(json)) {
 		return matches;
 	}
@@ -49,7 +53,7 @@ var findAllKeys = function (json, key, matches) {
 	return matches;
 };
 
-var findAllProperties = function (json, property, matches) {
+var findAllProperties = function findAllProperties(json, property, matches) {
 	var foundMatch = false;
 	_.forEach(_.keys(json.$), function (jsonProperty) {
 		if (property === jsonProperty && property in json.$) {
@@ -79,7 +83,7 @@ var findAllProperties = function (json, property, matches) {
 //	* //Element[@id='4']/@property
 //
 // Returns an array of matches.
-var find = function (json, path) {
+var find = function find(json, path) {
 	if (path === "") {
 		if (!_.isArray(json)) {
 			return [json];
@@ -96,8 +100,8 @@ var find = function (json, path) {
 		var node = match[1];
 		var key = match[2];
 		var value = match[3];
-		if (node in json && "$" in json[node]) {
-			if (key in json[node].$ && json[node].$[key] === value) {
+		if (node in json && ATTRKEY in json[node]) {
+			if (key in json[node][ATTRKEY] && json[node][ATTRKEY][key] === value) {
 				return find(json[node], path.replace(/^\/([\w:]+)\[@([\w:]+)='(\w+)'\]/, ""));
 			}
 		}
@@ -115,7 +119,7 @@ var find = function (json, path) {
 		var matches = findAllKeys(json, node, []);
 		var matches = _.filter(matches, function (val) {
 			if (ATTRKEY in val) {
-				return key in val.$ && val.$[key] === value;
+				return key in val[ATTRKEY] && val[ATTRKEY][key] === value;
 			}
 			return false;
 		});
@@ -136,25 +140,33 @@ var find = function (json, path) {
 	// match intermediate /Element/
 	match = path.match(/^\/([\w:]+)\//);
 	if (match) {
-		const node = match[1];
-		if (_.isArray(json[node])) {
-			let results = [];
-			json[node].forEach(sub => results = results.concat(find(sub, path.replace(/^\/[\w:]+\//, "/"))));
-			return results;
+		var _node = match[1];
+		if (_.isArray(json[_node])) {
+			var _ret = function () {
+				var results = [];
+				json[_node].forEach(function (sub) {
+					return results = results.concat(find(sub, path.replace(/^\/[\w:]+\//, "/")));
+				});
+				return {
+					v: results
+				};
+			}();
+
+			if ((typeof _ret === 'undefined' ? 'undefined' : _typeof(_ret)) === "object") return _ret.v;
 		} else {
-			return find(json[node], path.replace(/^\/[\w:]+\//, "/"));
+			return find(json[_node], path.replace(/^\/[\w:]+\//, "/"));
 		}
 	}
 
 	// match leaf /Element
 	match = path.match(/^\/([\w:]+)$/);
 	if (match) {
-		const node = match[1];
-		if (_.has(json, node)) {
-			if (_.isArray(json[node])) {
-				return json[node];
+		var _node2 = match[1];
+		if (_.has(json, _node2)) {
+			if (_.isArray(json[_node2])) {
+				return json[_node2];
 			} else {
-				return [json[node]];
+				return [json[_node2]];
 			}
 		}
 	}
@@ -172,12 +184,12 @@ var find = function (json, path) {
 		_.forEach(_.keys(json), function (key) {
 			if (_.isArray(json[key])) {
 				_.forEach(json[key], function (sub) {
-					if (_.has(sub, "$") && match[1] in sub.$) {
+					if (_.has(sub, ATTRKEY) && match[1] in sub[ATTRKEY]) {
 						matches.push(sub);
 					}
 				});
 			} else {
-				if (_.has(json, "$") && match[1] in json.$) {
+				if (_.has(json, ATTRKEY) && match[1] in json[ATTRKEY]) {
 					matches.push(json);
 				}
 			}
@@ -187,7 +199,7 @@ var find = function (json, path) {
 	return [];
 };
 
-var extractAll = function (json, path, pattern, extractFn) {
+var extractAll = function extractAll(json, path, pattern, extractFn) {
 	var match = path.match(pattern);
 	if (match) {
 		// see if the current dictionary has a match, for all that do not match, see
@@ -217,7 +229,7 @@ var extractAllProperties = _.partialRight(extractAll, findAllProperties);
 //
 // Returns a node (one with no attributes and a null value if no match)
 // If more than one match is found, the first is returned.
-var evalFirst = function (json, path, fetch) {
+var evalFirst = function evalFirst(json, path, fetch) {
 	var matches = find(json, path);
 	if (matches.length === 0) {
 		if (fetch) {
@@ -234,8 +246,8 @@ var evalFirst = function (json, path, fetch) {
 		return jsonText(matches);
 	}
 	if (_.isString(fetch)) {
-		if ("$" in matches && fetch in matches.$) {
-			return matches.$[fetch];
+		if (ATTRKEY in matches && fetch in matches[ATTRKEY]) {
+			return matches[ATTRKEY][fetch];
 		}
 		return undefined;
 	}

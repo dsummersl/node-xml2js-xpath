@@ -96,8 +96,8 @@ var find = function(json, path) {
 		var node = match[1];
 		var key = match[2];
 		var value = match[3];
-		if (node in json && "$" in json[node]) {
-			if (key in json[node].$ && json[node].$[key] === value) {
+		if (node in json && ATTRKEY in json[node]) {
+			if (key in json[node][ATTRKEY] && json[node][ATTRKEY][key] === value) {
 				return find(json[node],path.replace(/^\/([\w:]+)\[@([\w:]+)='(\w+)'\]/,""))
 			}
 		}
@@ -115,7 +115,7 @@ var find = function(json, path) {
 		var matches = findAllKeys(json, node, []);
 		var matches = _.filter(matches, function(val) {
 			if (ATTRKEY in val) {
-				return key in val.$ && val.$[key] === value;
+				return key in val[ATTRKEY] && val[ATTRKEY][key] === value;
 			}
 			return false;
 		});
@@ -173,12 +173,12 @@ var find = function(json, path) {
 		_.forEach(_.keys(json),function(key) {
 			if (_.isArray(json[key])) {
 				_.forEach(json[key], function(sub) {
-					if (_.has(sub,"$") && match[1] in sub.$) {
+					if (_.has(sub,ATTRKEY) && match[1] in sub[ATTRKEY]) {
 						matches.push(sub);
 					}
 				});
 			} else {
-				if (_.has(json,"$") && match[1] in json.$) {
+				if (_.has(json,ATTRKEY) && match[1] in json[ATTRKEY]) {
 					matches.push(json);
 				}
 			}
@@ -235,8 +235,8 @@ var evalFirst = function(json, path, fetch) {
 		return jsonText(matches);
 	}
 	if (_.isString(fetch)) {
-		if ("$" in matches && fetch in matches.$) {
-			return matches.$[fetch];
+		if (ATTRKEY in matches && fetch in matches[ATTRKEY]) {
+			return matches[ATTRKEY][fetch];
 		}
 		return undefined;
 	}

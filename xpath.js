@@ -1,15 +1,16 @@
 var _ = require("lodash");
-var xml2js = require("xml2js");
-
+// var xml2js = require("xml2js");
+const ATTRKEY = '$'
+const CHARKEY = '_'
 // Given a JSON document returned by xml2js (with _ and $ keys), return the
 // combined text value of the tags.
 var jsonText = function(json) {
 	if (_.isString(json)) {
 		return json;
 	}
-	var result = json._ || '';
+	var result = json[CHARKEY] || '';
 	_.forEach(_.keys(json),function(key) {
-		if (key === '$' || key === '_') {
+		if (key === ATTRKEY || key === CHARKEY) {
 			return;
 		}
     debugger;
@@ -30,7 +31,7 @@ var findAllKeys = function(json, key, matches) {
     return matches;
   }
 	_.forEach(_.keys(json),function(jsonKey) {
-		if (jsonKey === '$' || jsonKey === '_') {
+		if (jsonKey === ATTRKEY || jsonKey === CHARKEY) {
 			return;
 		}
 		if (key === jsonKey && key in json) {
@@ -59,7 +60,7 @@ var findAllProperties = function(json, property, matches) {
 
 	if (!foundMatch) {
 		_.forEach(_.keys(json),function(jsonKey) {
-			if (jsonKey === '$' || jsonKey === '_') {
+			if (jsonKey === ATTRKEY || jsonKey === CHARKEY) {
 				return;
 			}
 			findAllProperties(json[jsonKey], property, matches);
@@ -89,31 +90,31 @@ var find = function(json, path) {
 		path = path.substring(1);
 	}
 
-	// match Element[@key='value']
-	var match = path.match(/^\/(\w+)\[@(\w+)='(\w+)'\]/);
+	// match /Element[@key='value']
+	var match = path.match(/^\/([\w:]+)\[@([\w:]+)='(\w+)'\]/);
 	if (match) {
 		var node = match[1];
 		var key = match[2];
 		var value = match[3];
 		if (node in json && "$" in json[node]) {
 			if (key in json[node].$ && json[node].$[key] === value) {
-				return find(json[node],path.replace(/^\/(\w+)\[@(\w+)='(\w+)'\]/,""))
+				return find(json[node],path.replace(/^\/([\w:]+)\[@([\w:]+)='(\w+)'\]/,""))
 			}
 		}
 	}
 
 	// match //Element[@key='value']
-	var match = path.match(/^\/\/(\w+)\[@(\w+)='(\w+)'\]/);
+	var match = path.match(/^\/\/([\w:]+)\[@([\w:]+)='(\w+)'\]/);
 	if (match) {
 		// see if the current dictionary has a match, for all that do not match, see
 		// if their values have matches, etc...
 		var node = match[1];
 		var key = match[2];
 		var value = match[3];
-		var newPath = path.replace(/^\/\/(\w+)\[@(\w+)='(\w+)'\]/, "");
+		var newPath = path.replace(/^\/\/([\w:]+)\[@([\w:]+)='(\w+)'\]/, "");
 		var matches = findAllKeys(json, node, []);
 		var matches = _.filter(matches, function(val) {
-			if ('$' in val) {
+			if (ATTRKEY in val) {
 				return key in val.$ && val.$[key] === value;
 			}
 			return false;
@@ -127,25 +128,46 @@ var find = function(json, path) {
 	}
 
 	// match //Element
-	match = extractAllKeys(json, path, /^\/\/(\w+)/);
-	if (match !== false) {
+	match = extractAllKeys(json, path, /^\/\/([\w:]+)/);
+	if (match) {
 		return match;
 	}
 
-	// match /Element
-	match = extractAllKeys(json, path, /^\/(\w+)/);
-	if (match !== false) {
-		return match;
+	// match intermediate /Element/
+	match = path.match(/^\/([\w:]+)\//);
+	if (match) {
+		const node = match[1]
+		if (_.isArray(json[node])) {
+			let results = []
+			json[node].forEach((sub) => results = results.concat(find(sub, path.replace(/^\/[\w:]+\//, "/"))))
+			return results
+		} else {
+			return find(json[node], path.replace(/^\/[\w:]+\//, "/"))
+		}
+	}
+
+
+	// match leaf /Element
+	match = path.match(/^\/([\w:]+)$/);
+	if (match) {
+		const node = match[1]
+		if (_.has(json, node)) {
+			if (_.isArray(json[node])) {
+				return json[node]
+			} else {
+				return [json[node]]
+			}
+		}
 	}
 
 	// match //@property
-	match = extractAllProperties(json, path, /^\/\/@(\w+)/);
-	if (match !== false) {
+	match = extractAllProperties(json, path, /^\/\/@([\w:]+)/);
+	if (match) {
 		return match;
 	}
 
 	// match /@property
-	match = path.match(/^\/@(\w+)/);
+	match = path.match(/^\/@([\w:]+)/);
 	if (match) {
 		var matches = [];
 		_.forEach(_.keys(json),function(key) {

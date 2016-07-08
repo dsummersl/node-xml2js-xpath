@@ -1,34 +1,34 @@
 {
-  "name": "xml2js-xpath",
-  "version": "0.6.0",
-  "description": "Search xml2js JSON documents with XPath query strings.",
-  "main": "xpath.js",
-  "typings": "xml2js-xpath",
-  "scripts": {
-    "test": "./node_modules/.bin/mocha test"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/dsummersl/node-xml2js-xpath.git"
-  },
-  "keywords": [
-    "xml2js",
-    "xpath",
-    "search",
-    "parse"
-  ],
-  "author": "Dane Summers",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/dsummersl/node-xml2js-xpath/issues"
-  },
-  "homepage": "https://github.com/dsummersl/node-xml2js-xpath",
-  "dependencies": {
-    "lodash": "3.10.1",
-    "xml2js": "0.4.16"
-  },
-  "devDependencies": {
-    "chai": "^1.9.2",
-    "mocha": "^2.0.1"
-  }
+	"name": "xml2js-xpath",
+	"version": "0.6.1",
+	"description": "Search xml2js JSON documents with XPath query strings.",
+	"keywords": [
+		"xml2js",
+		"xpath",
+		"search",
+		"parse"
+	],
+	"homepage": "https://github.com/dsummersl/node-xml2js-xpath",
+	"bugs": {
+		"url": "https://github.com/dsummersl/node-xml2js-xpath/issues"
+	},
+	"license": "ISC",
+	"author": "Dane Summers",
+	"main": "xpath.js",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/dsummersl/node-xml2js-xpath.git"
+	},
+	"scripts": {
+		"test": "./node_modules/.bin/mocha test"
+	},
+	"dependencies": {
+		"lodash": "3.10.1"
+	},
+	"devDependencies": {
+    "xml2js": "^0.4.17",
+		"chai": "^1.9.2",
+		"mocha": "^2.0.1"
+	},
+	"typings": "xml2js-xpath"
 }

@@ -162,7 +162,6 @@ describe("xpath", function() {
 
     it('can find /vast/nest/val', function(done) {
 			parseString('<vast><nest><val>2</val></nest></vast>', function(err, json) {
-        debugger;
 				expect(xpath.find(json,'/vast/nest/val').length).to.equal(1);
 				expect(xpath.jsonText(xpath.find(json,'/vast/nest/val')[0])).to.equal('2');
 				done();
@@ -171,7 +170,6 @@ describe("xpath", function() {
 		// //Wrapper/URL should not match //Wrapper/URLS
     it('can not find //Wrapper/URL', function(done) {
 			parseString(file, function(err, json) {
-        debugger;
 				expect(xpath.find(json,'//Wrapper/URL').length).to.equal(0);
 				done();
 			});
@@ -180,7 +178,6 @@ describe("xpath", function() {
 		// //Wrapper/URL should not match //Wrapper/URLS
     it('can find one //Wrapper/URLS', function(done) {
 			parseString(file, function(err, json) {
-        debugger;
 				expect(xpath.find(json,'//Wrapper/URLS').length).to.equal(1);
 				done();
 			});
@@ -189,7 +186,6 @@ describe("xpath", function() {
 		// //Wrapper/URL should not match //Wrapper/TrackingEvents/Tracking/URL
     it('can find three //Wrapper/TrackingEvents/Tracking/URL', function(done) {
 			parseString(file, function(err, json) {
-        debugger;
 				expect(xpath.find(json,'//Wrapper/TrackingEvents/Tracking/URL').length).to.equal(3);
 				done();
 			});
@@ -198,7 +194,6 @@ describe("xpath", function() {
 		// ..but //Wrapper//URL should
     it('can find five //Wrapper//URL', function(done) {
 			parseString(file, function(err, json) {
-        debugger;
 				expect(xpath.find(json,'//Wrapper//URL').length).to.equal(5);
 				done();
 			});

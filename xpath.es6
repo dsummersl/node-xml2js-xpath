@@ -1,7 +1,8 @@
 var _ = require("lodash");
-// var xml2js = require("xml2js");
+
 const ATTRKEY = '$'
 const CHARKEY = '_'
+
 // Given a JSON document returned by xml2js (with _ and $ keys), return the
 // combined text value of the tags.
 var jsonText = function(json) {
@@ -13,7 +14,6 @@ var jsonText = function(json) {
 		if (key === ATTRKEY || key === CHARKEY) {
 			return;
 		}
-    debugger;
 		var value = json[key];
 		if (_.isArray(value)) {
 			_.forEach(value,function(entry) {

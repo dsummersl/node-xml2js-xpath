@@ -1,34 +1,36 @@
 {
   "name": "xml2js-xpath",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "description": "Search xml2js JSON documents with XPath query strings.",
-  "main": "xpath.js",
-  "typings": "xml2js-xpath",
-  "scripts": {
-    "test": "./node_modules/.bin/mocha test"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/dsummersl/node-xml2js-xpath.git"
-  },
   "keywords": [
     "xml2js",
     "xpath",
     "search",
     "parse"
   ],
-  "author": "Dane Summers",
-  "license": "ISC",
+  "homepage": "https://github.com/dsummersl/node-xml2js-xpath",
   "bugs": {
     "url": "https://github.com/dsummersl/node-xml2js-xpath/issues"
   },
-  "homepage": "https://github.com/dsummersl/node-xml2js-xpath",
+  "license": "ISC",
+  "author": "Dane Summers",
+  "main": "xpath.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dsummersl/node-xml2js-xpath.git"
+  },
+  "scripts": {
+    "test": "./node_modules/.bin/mocha test"
+  },
   "dependencies": {
-    "lodash": "3.10.1",
-    "xml2js": "0.4.16"
+    "lodash": "3.10.1"
   },
   "devDependencies": {
+    "babel-cli": "^6.10.1",
+    "babel-preset-es2015": "^6.9.0",
     "chai": "^1.9.2",
-    "mocha": "^2.0.1"
-  }
+    "mocha": "^2.0.1",
+    "xml2js": "^0.4.17"
+  },
+  "typings": "xml2js-xpath"
 }

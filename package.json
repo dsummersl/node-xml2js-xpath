@@ -20,6 +20,8 @@
     "url": "https://github.com/dsummersl/node-xml2js-xpath.git"
   },
   "scripts": {
+    "prepublish": "./node_modules/.bin/babel xpath.es6 > xpath.js",
+    "pretest": "npm run prepublish",
     "test": "./node_modules/.bin/mocha test"
   },
   "dependencies": {

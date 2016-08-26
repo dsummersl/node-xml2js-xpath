@@ -44,8 +44,6 @@ describe("xpath", function() {
 	});
 
 	describe("jsonText()", function() {
-		var parseString = require('xml2js').parseString;
-
 		it("returns nothing when there is nothing", function(done) {
 			parseString("<vast/>", function(err, json) {
 				expect(xpath.jsonText(json)).to.equal("");
@@ -123,8 +121,6 @@ describe("xpath", function() {
 				done();
 			});
 		});
-
-		var parseString = require('xml2js').parseString;
 
 		it("CDATAURLS/URL", function(done) {
 			parseString(file, function (err, json) {

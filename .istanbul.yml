@@ -1,0 +1,11 @@
+instrumentation:
+    verbose: true
+    root: src
+    include-all-sources: true
+    excludes:
+        - '**/*.spec.js'
+reporting:
+    dir: ./coverage
+    reports:
+        - lcov
+        - cobertura

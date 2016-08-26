@@ -1,11 +1,13 @@
-var xpath = require("../xpath");
+var xpath = require("./xpath");
 var expect = require('chai').expect;
 var fs = require("fs");
 var parseString = require('xml2js').parseString;
 var _ = require("lodash");
+const path = require('path');
+
 
 describe("xpath", function() {
-	var file = fs.readFileSync("test/fixtures/blockOfStreets.xml");
+	var file = fs.readFileSync(path.join("src", "fixtures", "blockOfStreets.xml"));
 
 	describe("evalFirst()", function() {
 		it("returns empty node when stuff isn't found.", function(done) {

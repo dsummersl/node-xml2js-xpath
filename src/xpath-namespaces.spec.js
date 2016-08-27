@@ -14,7 +14,7 @@ var NAMESPACES = {
 
 
 describe("xpath (with namespaces)", function() {
-    var filepath = path.join('test', 'fixtures', 'withNamespaces.xml');
+    var filepath = path.join('src', 'fixtures', 'withNamespaces.xml');
     var file = fs.readFileSync(filepath);
 
     describe("evalFirstNS()", function() {

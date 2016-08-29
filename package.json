@@ -14,13 +14,13 @@
   },
   "license": "ISC",
   "author": "Dane Summers",
-  "main": "xpath.js",
+  "main": "build/xpath.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/dsummersl/node-xml2js-xpath.git"
   },
   "scripts": {
-    "prepublish": "./node_modules/.bin/babel src/xpath.es6 > xpath.js",
+    "prepublish": "./node_modules/.bin/babel src/xpath.js > xpath.js",
     "test": "babel-node node_modules/.bin/babel-istanbul cover node_modules/.bin/_mocha -- 'src/**/*.spec.js'"
   },
   "dependencies": {

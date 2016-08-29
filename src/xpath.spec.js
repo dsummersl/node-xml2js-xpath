@@ -5,7 +5,6 @@ var parseString = require('xml2js').parseString;
 var _ = require("lodash");
 const path = require('path');
 
-
 describe("xpath", function() {
 	var file = fs.readFileSync(path.join("src", "fixtures", "blockOfStreets.xml"));
 

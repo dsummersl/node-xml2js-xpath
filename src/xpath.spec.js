@@ -157,6 +157,24 @@ describe("xpath", function() {
 			});
 		});
 
+		it("//TrackingEvents/Tracking[@underway=false]", function(done) {
+			parseString(file, function (err, json) {
+				expect(err).to.equal(null);
+				expect(xpath.find(json,".//TrackingEvents/Tracking[@underway='false']").length).to.equal(2);
+				expect(xpath.jsonText(xpath.find(json,".//TrackingEvents/Tracking[@underway='false']")[0])).to.equal("\n\t\t\t\t\t\thttp://serverland.net/ad/start\n\t\t\t\t\t");
+				done();
+			});
+		});
+
+		it("//TrackingEvents/Tracking[@underway=false]/URL", function(done) {
+			parseString(file, function (err, json) {
+				expect(err).to.equal(null);
+				expect(xpath.find(json,".//TrackingEvents/Tracking[@underway='false']/URL").length).to.equal(2);
+				expect(xpath.jsonText(xpath.find(json,".//TrackingEvents/Tracking[@underway='false']/URL")[0])).to.equal("\n\t\t\t\t\t\thttp://serverland.net/ad/start\n\t\t\t\t\t");
+				done();
+			});
+		});
+
     it('can find /vast/nest/val', function(done) {
 			parseString('<vast><nest><val>2</val></nest></vast>', function(err, json) {
 				expect(xpath.find(json,'/vast/nest/val').length).to.equal(1);

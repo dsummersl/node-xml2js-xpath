@@ -96,9 +96,21 @@ var find = function(json, path) {
 		var node = match[1];
 		var key = match[2];
 		var value = match[3];
-		if (node in json && ATTRKEY in json[node]) {
-			if (key in json[node][ATTRKEY] && json[node][ATTRKEY][key] === value) {
-				return find(json[node],path.replace(/^\/([\w:]+)\[@([\w:]+)='([^']+)'\]/,""))
+		var newPath = path.replace(`/${node}[@${key}='${value}']`, "");
+ 		if (node in json) {
+			if (ATTRKEY in json[node]) {
+				if (key in json[node][ATTRKEY] && json[node][ATTRKEY][key] === value) {
+					return find(json[node], newPath);
+				}
+			} else if (_.isArray(json[node])) {
+					var results = []
+					_.forEach(json[node], function (item) {
+						if (ATTRKEY in item && key in item[ATTRKEY] && item[ATTRKEY][key] === value) {
+							var hits = find(item, newPath);
+							results = results.concat(hits);
+						}
+					})
+					return results;
 			}
 		}
 	}
@@ -111,7 +123,7 @@ var find = function(json, path) {
 		var node = match[1];
 		var key = match[2];
 		var value = match[3];
-		var newPath = path.replace(/^\/\/([\w:]+)\[@([\w:]+)='([^']+)'\]/, "");
+		var newPath = path.replace(`//${node}[@${key}='${value}']`, "");
 		var matches = findAllKeys(json, node, []);
 		var matches = _.filter(matches, function(val) {
 			if (ATTRKEY in val) {
@@ -120,9 +132,9 @@ var find = function(json, path) {
 			return false;
 		});
 		var results = [];
-		_.forEach(matches, function(value) {
-			var matches = find(value, newPath);
-			results = results.concat(matches);
+		_.forEach(matches, function(item) {
+			var hits = find(item, newPath);
+			results = results.concat(hits);
 		});
 		return results;
 	}
@@ -139,13 +151,12 @@ var find = function(json, path) {
 		const node = match[1]
 		if (_.isArray(json[node])) {
 			let results = []
-			json[node].forEach((sub) => results = results.concat(find(sub, path.replace(/^\/[\w:]+\//, "/"))))
+			json[node].forEach((sub) => results = results.concat(find(sub, path.replace(`/${node}/`, "/"))))
 			return results
 		} else {
-			return find(json[node], path.replace(/^\/[\w:]+\//, "/"))
+			return find(json[node], path.replace(`/${node}/`, "/"))
 		}
 	}
-
 
 	// match leaf /Element
 	match = path.match(/^\/([\w:]+)$/);

@@ -5,47 +5,40 @@ var parseString = require('xml2js').parseString;
 var _ = require("lodash");
 const path = require('path');
 
-
 describe("xpath", function() {
 	var file = fs.readFileSync(path.join("src", "fixtures", "blockOfStreets.xml"));
+  var json = null;
+
+  before(function(done) {
+    parseString(file, function(err, parsedJson) {
+      json = parsedJson;
+      done();
+    });
+  });
 
 	describe("evalFirst()", function() {
-		it("returns empty node when stuff isn't found.", function(done) {
-			parseString(file, function (err, json) {
-				var match = xpath.evalFirst(json,'$..Junk');
-				expect(match).to.equal(undefined);
-				done();
-			});
+		it("returns empty node when stuff isn't found.", function() {
+      var match = xpath.evalFirst(json,'$..Junk');
+      expect(match).to.equal(undefined);
 		});
 
-		it("returns the first element if there are many", function(done) {
-			parseString(file, function (err, json) {
-				var match = xpath.evalFirst(json,'//Tracking/URL');
-				expect(match._.trim()).to.equal("http://serverland.net/ad/start");
-				done();
-			});
+		it("returns the first element if there are many", function() {
+      var match = xpath.evalFirst(json,'//Tracking/URL');
+      expect(match._.trim()).to.equal("http://serverland.net/ad/start");
 		});
 
-		it("returns the text of the found node when fetch=true", function(done) {
-			parseString(file, function (err, json) {
-				var match = xpath.evalFirst(json,'//Tracking/URL',true);
-				expect(match.trim()).to.equal("http://serverland.net/ad/start");
-				done();
-			});
+		it("returns the text of the found node when fetch=true", function() {
+      var match = xpath.evalFirst(json,'//Tracking/URL',true);
+      expect(match.trim()).to.equal("http://serverland.net/ad/start");
 		});
 
-		it("returns the property of the found node when fetch='name'", function(done) {
-			parseString(file, function (err, json) {
-				var match = xpath.evalFirst(json,'//Tracking/URL','id');
-				expect(match).to.equal("number0");
-				done();
-			});
+		it("returns the property of the found node when fetch='name'", function() {
+      var match = xpath.evalFirst(json,'//Tracking/URL','id');
+      expect(match).to.equal("number0");
 		});
 	});
 
 	describe("jsonText()", function() {
-		var parseString = require('xml2js').parseString;
-
 		it("returns nothing when there is nothing", function(done) {
 			parseString("<vast/>", function(err, json) {
 				expect(xpath.jsonText(json)).to.equal("");
@@ -115,69 +108,40 @@ describe("xpath", function() {
 			});
 		});
 
-		it("matches Vast1Ad searches", function(done) {
-			parseString(file, function(err, json) {
-				var matches = xpath.find(json,".//Tracking[@event='start']/URL");
-				expect(matches.length).to.equal(1);
-				expect(xpath.jsonText(matches[0]).trim()).to.equal("http://serverland.net/ad/start");
-				done();
-			});
+		it("matches Vast1Ad searches", function() {
+      var matches = xpath.find(json,".//Tracking[@event='start']/URL");
+      expect(matches.length).to.equal(1);
+      expect(xpath.jsonText(matches[0]).trim()).to.equal("http://serverland.net/ad/start");
 		});
 
-		var parseString = require('xml2js').parseString;
-
-		it("CDATAURLS/URL", function(done) {
-			parseString(file, function (err, json) {
-				expect(err).to.equal(null);
-				expect(xpath.find(json,".//CDATAURLS/URL").length).to.equal(1);
-				expect(xpath.find(json,".//CDATAURLS/URL")[0]._).to.equal("\n\t\t\t\t\thttp://www.primarysite.com/tracker?imp\n\t\t\t\t");
-				done();
-			});
+		it("CDATAURLS/URL", function() {
+      expect(xpath.find(json,".//CDATAURLS/URL").length).to.equal(1);
+      expect(xpath.find(json,".//CDATAURLS/URL")[0]._).to.equal("\n\t\t\t\t\thttp://www.primarysite.com/tracker?imp\n\t\t\t\t");
 		});
 
-		it("CDATAURLS/URL", function(done) {
-			parseString(file, function (err, json) {
-				expect(err).to.equal(null);
-				expect(xpath.find(json,"//CDATAURLS").length).to.equal(1);
-				expect(xpath.jsonText(xpath.find(json,"//CDATAURLS")[0])).to.equal("\n\t\t\t\t\thttp://www.primarysite.com/tracker?imp\n\t\t\t\t");
-				done();
-			});
+		it("CDATAURLS/URL", function() {
+      expect(xpath.find(json,"//CDATAURLS").length).to.equal(1);
+      expect(xpath.jsonText(xpath.find(json,"//CDATAURLS")[0])).to.equal("\n\t\t\t\t\thttp://www.primarysite.com/tracker?imp\n\t\t\t\t");
 		});
 
-		it("Tracking[@event=midpoint]", function(done) {
-			parseString(file, function (err, json) {
-				expect(err).to.equal(null);
-				expect(xpath.find(json,".//Tracking[@event='midpoint']").length).to.equal(1);
-				expect(xpath.jsonText(xpath.find(json,".//Tracking[@event='midpoint']")[0])).to.equal("\n\t\t\t\t\t\thttp://serverland.net/ad/midpoint\n\t\t\t\t\t");
-				done();
-			});
+		it("Tracking[@event=midpoint]", function() {
+      expect(xpath.find(json,".//Tracking[@event='midpoint']").length).to.equal(1);
+      expect(xpath.jsonText(xpath.find(json,".//Tracking[@event='midpoint']")[0])).to.equal("\n\t\t\t\t\t\thttp://serverland.net/ad/midpoint\n\t\t\t\t\t");
 		});
 
-		it("Tracking[@event=midpoint]/URL", function(done) {
-			parseString(file, function (err, json) {
-				expect(err).to.equal(null);
-				expect(xpath.find(json,".//Tracking[@event='midpoint']/URL").length).to.equal(1);
-				expect(xpath.jsonText(xpath.find(json,".//Tracking[@event='midpoint']/URL")[0])).to.equal("\n\t\t\t\t\t\thttp://serverland.net/ad/midpoint\n\t\t\t\t\t");
-				done();
-			});
+		it("Tracking[@event=midpoint]/URL", function() {
+      expect(xpath.find(json,".//Tracking[@event='midpoint']/URL").length).to.equal(1);
+      expect(xpath.jsonText(xpath.find(json,".//Tracking[@event='midpoint']/URL")[0])).to.equal("\n\t\t\t\t\t\thttp://serverland.net/ad/midpoint\n\t\t\t\t\t");
 		});
 
-		it("//TrackingEvents/Tracking[@underway=false]", function(done) {
-			parseString(file, function (err, json) {
-				expect(err).to.equal(null);
-				expect(xpath.find(json,".//TrackingEvents/Tracking[@underway='false']").length).to.equal(2);
-				expect(xpath.jsonText(xpath.find(json,".//TrackingEvents/Tracking[@underway='false']")[0])).to.equal("\n\t\t\t\t\t\thttp://serverland.net/ad/start\n\t\t\t\t\t");
-				done();
-			});
+		it("//TrackingEvents/Tracking[@underway=false]", function() {
+      expect(xpath.find(json,".//TrackingEvents/Tracking[@underway='false']").length).to.equal(2);
+      expect(xpath.jsonText(xpath.find(json,".//TrackingEvents/Tracking[@underway='false']")[0])).to.equal("\n\t\t\t\t\t\thttp://serverland.net/ad/start\n\t\t\t\t\t");
 		});
 
-		it("//TrackingEvents/Tracking[@underway=false]/URL", function(done) {
-			parseString(file, function (err, json) {
-				expect(err).to.equal(null);
-				expect(xpath.find(json,".//TrackingEvents/Tracking[@underway='false']/URL").length).to.equal(2);
-				expect(xpath.jsonText(xpath.find(json,".//TrackingEvents/Tracking[@underway='false']/URL")[0])).to.equal("\n\t\t\t\t\t\thttp://serverland.net/ad/start\n\t\t\t\t\t");
-				done();
-			});
+		it("//TrackingEvents/Tracking[@underway=false]/URL", function() {
+      expect(xpath.find(json,".//TrackingEvents/Tracking[@underway='false']/URL").length).to.equal(2);
+      expect(xpath.jsonText(xpath.find(json,".//TrackingEvents/Tracking[@underway='false']/URL")[0])).to.equal("\n\t\t\t\t\t\thttp://serverland.net/ad/start\n\t\t\t\t\t");
 		});
 
     it('can find /vast/nest/val', function(done) {
@@ -188,35 +152,23 @@ describe("xpath", function() {
 			});
     });
 		// //Wrapper/URL should not match //Wrapper/URLS
-    it('can not find //Wrapper/URL', function(done) {
-			parseString(file, function(err, json) {
-				expect(xpath.find(json,'//Wrapper/URL').length).to.equal(0);
-				done();
-			});
+    it('can not find //Wrapper/URL', function() {
+      expect(xpath.find(json,'//Wrapper/URL').length).to.equal(0);
     });
 
 		// //Wrapper/URL should not match //Wrapper/URLS
-    it('can find one //Wrapper/URLS', function(done) {
-			parseString(file, function(err, json) {
-				expect(xpath.find(json,'//Wrapper/URLS').length).to.equal(1);
-				done();
-			});
+    it('can find one //Wrapper/URLS', function() {
+      expect(xpath.find(json,'//Wrapper/URLS').length).to.equal(1);
     });
 
 		// //Wrapper/URL should not match //Wrapper/TrackingEvents/Tracking/URL
-    it('can find three //Wrapper/TrackingEvents/Tracking/URL', function(done) {
-			parseString(file, function(err, json) {
-				expect(xpath.find(json,'//Wrapper/TrackingEvents/Tracking/URL').length).to.equal(3);
-				done();
-			});
+    it('can find three //Wrapper/TrackingEvents/Tracking/URL', function() {
+      expect(xpath.find(json,'//Wrapper/TrackingEvents/Tracking/URL').length).to.equal(3);
     });
 
 		// ..but //Wrapper//URL should
-    it('can find five //Wrapper//URL', function(done) {
-			parseString(file, function(err, json) {
-				expect(xpath.find(json,'//Wrapper//URL').length).to.equal(5);
-				done();
-			});
+    it('can find five //Wrapper//URL', function() {
+      expect(xpath.find(json,'//Wrapper//URL').length).to.equal(5);
     });
 	});
 });

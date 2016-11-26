@@ -12,17 +12,17 @@
 				</URL>
 			</CDATAURLS>
 			<TrackingEvents>
-				<Tracking event="start">
+				<Tracking event="start" underway="false">
 					<URL id="number0">
 						<![CDATA[http://serverland.net/ad/start]]>
 					</URL>
 					</Tracking>
-				<Tracking event="midpoint">
+				<Tracking event="midpoint" underway="true">
 					<URL id="number1">
 						<![CDATA[http://serverland.net/ad/midpoint]]>
 					</URL>
 				</Tracking>
-				<Tracking event="complete">
+				<Tracking event="complete" underway="false">
 					<URL id="number2">
 						<![CDATA[http://serverland.net/ad/complete]]>
 					</URL>

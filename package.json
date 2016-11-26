@@ -14,7 +14,7 @@
   },
   "license": "ISC",
   "author": "Dane Summers",
-  "main": "build/xpath.js",
+  "main": "xpath.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/dsummersl/node-xml2js-xpath.git"

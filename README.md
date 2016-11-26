@@ -22,7 +22,7 @@ To use this library, first you need to some xml2js results to parse. Example:
 var xml2js = require("xml2js");
 var xpath = require("xml2js-xpath");
 
-xml2js.parseString("<root><element id="15">target</element></root>", function(err, json) {
+xml2js.parseString('<root><element id="15">target</element></root>', function(err, json) {
   // find all elements: returns xml2js JSON of the element
   var matches = xpath.find(json, "//element");
 

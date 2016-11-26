@@ -15,9 +15,9 @@
             </d:CDATAURLS>
             <c:TrackingEvents>
                 <c:Tracking event="start">
-                    <d:URL id="number0">
+                    <b:URL id="number0">
                         <![CDATA[http://serverland.net/ad/start]]>
-                    </d:URL>
+                    </b:URL>
                 </c:Tracking>
                 <c:Tracking id="midpoint">
                     <b:URL id="number1">

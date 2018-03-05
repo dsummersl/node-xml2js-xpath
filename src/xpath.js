@@ -4,7 +4,9 @@ const ATTRKEY = '$'
 const CHARKEY = '_'
 
 // Definition of an XML name tag: https://www.w3.org/TR/xml/#NT-Name
-const NAME_START_CHAR = 'A-Za-z:_\xC0-\xD6\xD8-\xF6\xF8-\u02FF\u0370-\u037D\u037F-\u1FFF\u200C-\u200D\u2070-\u218F\u2C00-\u2FEF\u3001-\uD7FF\uF900-\uFDCF\uFDF0-\uFFFD'
+const NAME_START_CHAR = 'A-Za-z:_\xC0-\xD6\xD8-\xF6\xF8-\u02FF\u0370-\u037D' +
+	'\u037F-\u1FFF\u200C-\u200D\u2070-\u218F\u2C00-\u2FEF\u3001-\uD7FF' +
+	'\uF900-\uFDCF\uFDF0-\uFFFD'
 const NAME_CHAR = `${NAME_START_CHAR}.0-9·\u0300-\u036F\u203F-\u2040-`
 const TAG_NAME = `[${NAME_START_CHAR}][${NAME_CHAR}]*`
 const TAG_AND_PROP = `(${TAG_NAME})\\[@([\\w:]+)='([^']+)'\\]`

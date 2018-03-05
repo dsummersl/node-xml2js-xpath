@@ -1,20 +1,28 @@
-var _ = require("lodash");
+let _ = require("lodash");
 
 const ATTRKEY = '$'
 const CHARKEY = '_'
 
+// Definition of an XML name tag: https://www.w3.org/TR/xml/#NT-Name
+const NAME_START_CHAR = 'A-Za-z:_\xC0-\xD6\xD8-\xF6\xF8-\u02FF\u0370-\u037D' +
+	'\u037F-\u1FFF\u200C-\u200D\u2070-\u218F\u2C00-\u2FEF\u3001-\uD7FF' +
+	'\uF900-\uFDCF\uFDF0-\uFFFD'
+const NAME_CHAR = `${NAME_START_CHAR}.0-9·\u0300-\u036F\u203F-\u2040-`
+const TAG_NAME = `[${NAME_START_CHAR}][${NAME_CHAR}]*`
+const TAG_AND_PROP = `(${TAG_NAME})\\[@([\\w:]+)='([^']+)'\\]`
+
 // Given a JSON document returned by xml2js (with _ and $ keys), return the
 // combined text value of the tags.
-var jsonText = function(json) {
+let jsonText = function(json) {
 	if (_.isString(json)) {
 		return json;
 	}
-	var result = json[CHARKEY] || '';
+	let result = json[CHARKEY] || '';
 	_.forEach(_.keys(json),function(key) {
 		if (key === ATTRKEY || key === CHARKEY) {
 			return;
 		}
-		var value = json[key];
+		let value = json[key];
 		if (_.isArray(value)) {
 			_.forEach(value,function(entry) {
 				result += jsonText(entry);
@@ -26,10 +34,10 @@ var jsonText = function(json) {
 	return result;
 };
 
-var findAllKeys = function(json, key, matches) {
-  if (_.isString(json)) {
-    return matches;
-  }
+let findAllKeys = function(json, key, matches) {
+	if (_.isString(json)) {
+		return matches;
+	}
 	_.forEach(_.keys(json),function(jsonKey) {
 		if (jsonKey === ATTRKEY || jsonKey === CHARKEY) {
 			return;
@@ -49,8 +57,8 @@ var findAllKeys = function(json, key, matches) {
 	return matches;
 };
 
-var findAllProperties = function(json, property, matches) {
-	var foundMatch = false;
+let findAllProperties = function(json, property, matches) {
+	let foundMatch = false;
 	_.forEach(_.keys(json.$),function(jsonProperty) {
 		if (property === jsonProperty && property in json.$) {
 			matches.push(json);
@@ -79,7 +87,7 @@ var findAllProperties = function(json, property, matches) {
 //	* //Element[@id='4']/@property
 //
 // Returns an array of matches.
-var find = function(json, path) {
+let find = function(json, path) {
 	if (path === "") {
 		if (!_.isArray(json)) {
 			return [json];
@@ -91,22 +99,22 @@ var find = function(json, path) {
 	}
 
 	// match /Element[@key='value']
-	var match = path.match(/^\/([\w:]+)\[@([\w:]+)='([^']+)'\]/);
+	let match = path.match(`^\\/${TAG_AND_PROP}`);
 	if (match) {
-		var node = match[1];
-		var key = match[2];
-		var value = match[3];
-		var newPath = path.replace(`/${node}[@${key}='${value}']`, "");
- 		if (node in json) {
+		let node = match[1];
+		let key = match[2];
+		let value = match[3];
+		let newPath = path.replace(`/${node}[@${key}='${value}']`, "");
+		if (node in json) {
 			if (ATTRKEY in json[node]) {
 				if (key in json[node][ATTRKEY] && json[node][ATTRKEY][key] === value) {
 					return find(json[node], newPath);
 				}
 			} else if (_.isArray(json[node])) {
-					var results = []
+					let results = []
 					_.forEach(json[node], function (item) {
 						if (ATTRKEY in item && key in item[ATTRKEY] && item[ATTRKEY][key] === value) {
-							var hits = find(item, newPath);
+							let hits = find(item, newPath);
 							results = results.concat(hits);
 						}
 					})
@@ -116,37 +124,37 @@ var find = function(json, path) {
 	}
 
 	// match //Element[@key='value']
-	var match = path.match(/^\/\/([\w:]+)\[@([\w:]+)='([^']+)'\]/);
+	match = path.match(`^\\/\\/${TAG_AND_PROP}`);
 	if (match) {
 		// see if the current dictionary has a match, for all that do not match, see
 		// if their values have matches, etc...
-		var node = match[1];
-		var key = match[2];
-		var value = match[3];
-		var newPath = path.replace(`//${node}[@${key}='${value}']`, "");
-		var matches = findAllKeys(json, node, []);
-		var matches = _.filter(matches, function(val) {
+		let node = match[1];
+		let key = match[2];
+		let value = match[3];
+		let newPath = path.replace(`//${node}[@${key}='${value}']`, "");
+		let foundKeys = findAllKeys(json, node, []);
+		let matches = _.filter(foundKeys, function(val) {
 			if (ATTRKEY in val) {
 				return key in val[ATTRKEY] && val[ATTRKEY][key] === value;
 			}
 			return false;
 		});
-		var results = [];
+		let results = [];
 		_.forEach(matches, function(item) {
-			var hits = find(item, newPath);
+			let hits = find(item, newPath);
 			results = results.concat(hits);
 		});
 		return results;
 	}
 
 	// match //Element
-	match = extractAllKeys(json, path, /^\/\/([\w:]+)/);
+	match = extractAllKeys(json, path, new RegExp(`^\/\/([${NAME_START_CHAR}][${NAME_CHAR}]*)`));
 	if (match) {
 		return match;
 	}
 
 	// match intermediate /Element/
-	match = path.match(/^\/([\w:]+)\//);
+	match = path.match(`^\\/(${TAG_NAME})\\/`);
 	if (match) {
 		const node = match[1]
 		if (_.isArray(json[node])) {
@@ -159,7 +167,7 @@ var find = function(json, path) {
 	}
 
 	// match leaf /Element
-	match = path.match(/^\/([\w:]+)$/);
+	match = path.match(`^\\/(${TAG_NAME})$`);
 	if (match) {
 		const node = match[1]
 		if (_.has(json, node)) {
@@ -180,7 +188,7 @@ var find = function(json, path) {
 	// match /@property
 	match = path.match(/^\/@([\w:]+)/);
 	if (match) {
-		var matches = [];
+		let matches = [];
 		_.forEach(_.keys(json),function(key) {
 			if (_.isArray(json[key])) {
 				_.forEach(json[key], function(sub) {
@@ -199,16 +207,16 @@ var find = function(json, path) {
 	return [];
 };
 
-var extractAll = function(json, path, pattern, extractFn) {
-	var match = path.match(pattern);
+let extractAll = function(json, path, pattern, extractFn) {
+	let match = path.match(pattern);
 	if (match) {
 		// see if the current dictionary has a match, for all that do not match, see
 		// if their values have matches, etc...
-		var newPath = path.replace(pattern, '');
-		var matches = extractFn(json, match[1], []);
-		var results = [];
+		let newPath = path.replace(pattern, '');
+		let matches = extractFn(json, match[1], []);
+		let results = [];
 		_.forEach(matches, function(value) {
-			var matches = find(value, newPath);
+			let matches = find(value, newPath);
 			results = results.concat(matches);
 		});
 		return results;
@@ -216,8 +224,8 @@ var extractAll = function(json, path, pattern, extractFn) {
 
 	return false;
 };
-var extractAllKeys = _.partialRight(extractAll,findAllKeys);
-var extractAllProperties = _.partialRight(extractAll,findAllProperties);
+let extractAllKeys = _.partialRight(extractAll,findAllKeys);
+let extractAllProperties = _.partialRight(extractAll,findAllProperties);
 
 // Use find to search a JSON object.
 //
@@ -229,8 +237,8 @@ var extractAllProperties = _.partialRight(extractAll,findAllProperties);
 //
 // Returns a node (one with no attributes and a null value if no match)
 // If more than one match is found, the first is returned.
-var evalFirst = function(json, path, fetch) {
-	var matches = find(json, path);
+let evalFirst = function(json, path, fetch) {
+	let matches = find(json, path);
 	if (matches.length === 0) {
 		if (fetch) {
 			return undefined;

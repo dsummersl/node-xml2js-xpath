@@ -170,5 +170,12 @@ describe("xpath", function() {
 		it('can find five //Wrapper//URL', function() {
 			expect(xpath.find(json,'//Wrapper//URL').length).to.equal(5);
 		});
+
+		it("can find tags with hyphens", function() {
+			expect(xpath.find(json,'//Block-Numbers').length).to.equal(1);
+			expect(xpath.find(json,'/Root/Street/Block-Numbers').length).to.equal(1);
+			expect(xpath.find(json,'//Block-Numbers/Block').length).to.equal(2);
+			expect(xpath.find(json,'/Root/Street/Block-Numbers/Block').length).to.equal(2);
+		});
 	});
 });

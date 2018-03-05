@@ -3,6 +3,12 @@ var _ = require("lodash");
 const ATTRKEY = '$'
 const CHARKEY = '_'
 
+// Definition of an XML name tag: https://www.w3.org/TR/xml/#NT-Name
+const NAME_START_CHAR = 'A-Za-z:_\xC0-\xD6\xD8-\xF6\xF8-\u02FF\u0370-\u037D\u037F-\u1FFF\u200C-\u200D\u2070-\u218F\u2C00-\u2FEF\u3001-\uD7FF\uF900-\uFDCF\uFDF0-\uFFFD'
+const NAME_CHAR = `${NAME_START_CHAR}.0-9·\u0300-\u036F\u203F-\u2040-`
+const TAG_NAME = `[${NAME_START_CHAR}][${NAME_CHAR}]*`
+const TAG_AND_PROP = `(${TAG_NAME})\\[@([\\w:]+)='([^']+)'\\]`
+
 // Given a JSON document returned by xml2js (with _ and $ keys), return the
 // combined text value of the tags.
 var jsonText = function(json) {
@@ -91,7 +97,7 @@ var find = function(json, path) {
 	}
 
 	// match /Element[@key='value']
-	var match = path.match(/^\/([\w:]+)\[@([\w:]+)='([^']+)'\]/);
+	let match = path.match(`^\\/${TAG_AND_PROP}`);
 	if (match) {
 		var node = match[1];
 		var key = match[2];
@@ -116,7 +122,7 @@ var find = function(json, path) {
 	}
 
 	// match //Element[@key='value']
-	var match = path.match(/^\/\/([\w:]+)\[@([\w:]+)='([^']+)'\]/);
+	match = path.match(`^\\/\\/${TAG_AND_PROP}`);
 	if (match) {
 		// see if the current dictionary has a match, for all that do not match, see
 		// if their values have matches, etc...
@@ -140,13 +146,13 @@ var find = function(json, path) {
 	}
 
 	// match //Element
-	match = extractAllKeys(json, path, /^\/\/([\w:]+)/);
+	match = extractAllKeys(json, path, new RegExp(`^\/\/([${NAME_START_CHAR}][${NAME_CHAR}]*)`));
 	if (match) {
 		return match;
 	}
 
 	// match intermediate /Element/
-	match = path.match(/^\/([\w:]+)\//);
+	match = path.match(`^\\/(${TAG_NAME})\\/`);
 	if (match) {
 		const node = match[1]
 		if (_.isArray(json[node])) {
@@ -159,7 +165,7 @@ var find = function(json, path) {
 	}
 
 	// match leaf /Element
-	match = path.match(/^\/([\w:]+)$/);
+	match = path.match(`^\\/(${TAG_NAME})$`);
 	if (match) {
 		const node = match[1]
 		if (_.has(json, node)) {

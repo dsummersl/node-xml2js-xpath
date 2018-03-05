@@ -27,9 +27,9 @@ var jsonText = function(json) {
 };
 
 var findAllKeys = function(json, key, matches) {
-  if (_.isString(json)) {
-    return matches;
-  }
+	if (_.isString(json)) {
+		return matches;
+	}
 	_.forEach(_.keys(json),function(jsonKey) {
 		if (jsonKey === ATTRKEY || jsonKey === CHARKEY) {
 			return;
@@ -97,7 +97,7 @@ var find = function(json, path) {
 		var key = match[2];
 		var value = match[3];
 		var newPath = path.replace(`/${node}[@${key}='${value}']`, "");
- 		if (node in json) {
+		if (node in json) {
 			if (ATTRKEY in json[node]) {
 				if (key in json[node][ATTRKEY] && json[node][ATTRKEY][key] === value) {
 					return find(json[node], newPath);

@@ -1,6 +1,6 @@
 {
   "name": "xml2js-xpath",
-  "version": "0.9.0",
+  "version": "0.9.1",
   "description": "Search xml2js JSON documents with XPath query strings.",
   "keywords": [
     "xml2js",
@@ -21,19 +21,49 @@
   },
   "scripts": {
     "prepublish": "./node_modules/.bin/babel src/xpath.js > xpath.js",
-    "test": "babel-node node_modules/.bin/babel-istanbul cover node_modules/.bin/_mocha -- 'src/**/*.spec.js'"
+    "test": "nyc mocha src/**/*.test.js"
   },
   "dependencies": {
-    "lodash": "4.17.5"
+    "lodash": "^4.17.11"
   },
   "devDependencies": {
-    "babel-cli": "6.26.0",
-    "babel-core": "6.26.0",
-    "babel-istanbul": "0.12.2",
-    "babel-preset-env": "^1.6.1",
-    "chai": "4.1.2",
-    "mocha": "5.0.1",
-    "xml2js": "0.4.19"
+    "@babel/cli": "^7.4.3",
+    "@babel/core": "^7.4.3",
+    "@babel/plugin-transform-runtime": "^7.4.3",
+    "@babel/preset-env": "^7.4.3",
+    "@babel/register": "^7.4.0",
+    "@babel/runtime": "^7.4.3",
+    "@istanbuljs/nyc-config-babel": "^2.1.0",
+    "babel-plugin-istanbul": "^5.1.3",
+    "chai": "^4.2.0",
+    "mocha": "^6.1.4",
+    "nyc": "^14.0.0",
+    "xml2js": "^0.4.19"
   },
-  "typings": "xml2js-xpath"
+  "typings": "xml2js-xpath",
+  "babel": {
+    "plugins": [
+      "@babel/plugin-transform-runtime"
+    ],
+    "presets": [
+      [
+        "@babel/preset-env",
+        {
+          "targets": {
+            "node": "current"
+          }
+        }
+      ]
+    ],
+    "env": {
+      "test": {
+        "plugins": [
+          "istanbul"
+        ]
+      }
+    }
+  },
+  "nyc": {
+    "extends": "@istanbul/nyc-config-babel"
+  }
 }

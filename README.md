@@ -28,6 +28,9 @@ xml2js.parseString('<root><element id="15">target</element></root>', function(er
 
   // find the first element, and get its id:
   var matches = xpath.evalFirst(json, "//element", "id");
+
+  // Extract text representation of XML document:
+  assert xpath.jsonText(json) === 'target';
 });
 ```
 

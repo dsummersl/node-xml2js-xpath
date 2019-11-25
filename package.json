@@ -24,7 +24,7 @@
     "test": "nyc mocha src/**/*.test.js"
   },
   "dependencies": {
-    "lodash": "^4.17.11"
+    "lodash": "^4.17.15"
   },
   "devDependencies": {
     "@babel/cli": "^7.4.4",
@@ -37,7 +37,7 @@
     "babel-plugin-istanbul": "^5.1.4",
     "chai": "^4.2.0",
     "mocha": "^6.1.4",
-    "nyc": "^14.1.0",
+    "nyc": "latest",
     "xml2js": "^0.4.19"
   },
   "typings": "xml2js-xpath",

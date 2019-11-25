@@ -1,6 +1,6 @@
 {
   "name": "xml2js-xpath",
-  "version": "0.10.0",
+  "version": "0.11.0",
   "description": "Search xml2js JSON documents with XPath query strings.",
   "keywords": [
     "xml2js",

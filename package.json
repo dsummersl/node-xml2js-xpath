@@ -20,8 +20,7 @@
     "url": "https://github.com/dsummersl/node-xml2js-xpath.git"
   },
   "scripts": {
-		"prepublish": "babel src/xpath.js > xpath.js",
-		"prepare": "babel src/xpath.js > xpath.js",
+    "prepublish": "babel src/xpath.js > xpath.js",
     "test": "nyc mocha src/**/*.test.js"
   },
   "dependencies": {
@@ -37,6 +36,7 @@
     "@istanbuljs/nyc-config-babel": "^2.1.1",
     "babel-plugin-istanbul": "^5.1.4",
     "chai": "^4.2.0",
+    "eslint": "^6.6.0",
     "mocha": "^6.1.4",
     "nyc": "latest",
     "xml2js": "^0.4.19"

@@ -174,7 +174,7 @@ let find = function(json, path) {
 	}
 
 	// match //Element
-	match = extractAllKeys(json, path, new RegExp(`^\/\/([${NAME_START_CHAR}][${NAME_CHAR}]*)`));
+	match = extractAllKeys(json, path, new RegExp(`^//([${NAME_START_CHAR}][${NAME_CHAR}]*)`));
 	if (match) {
 		return match;
 	}

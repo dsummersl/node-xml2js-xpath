@@ -1,13 +1,13 @@
-var xpath = require("./xpath");
-var expect = require('chai').expect;
-var fs = require("fs");
-var parseString = require('xml2js').parseString;
-var _ = require("lodash");
+let xpath = require("./xpath");
+let expect = require('chai').expect;
+let fs = require("fs");
+let parseString = require('xml2js').parseString;
+let _ = require("lodash");
 const path = require('path');
 
 describe("xpath", function() {
-	var file = fs.readFileSync(path.join("src", "fixtures", "blockOfStreets.xml"));
-	var json = null;
+	let file = fs.readFileSync(path.join("src", "fixtures", "blockOfStreets.xml"));
+	let json = null;
 
 	before(function(done) {
 		parseString(file, function(err, parsedJson) {
@@ -18,22 +18,22 @@ describe("xpath", function() {
 
 	describe("evalFirst()", function() {
 		it("returns empty node when stuff isn't found.", function() {
-			var match = xpath.evalFirst(json,'$..Junk');
+			let match = xpath.evalFirst(json,'$..Junk');
 			expect(match).to.equal(undefined);
 		});
 
 		it("returns the first element if there are many", function() {
-			var match = xpath.evalFirst(json,'//Tracking/URL');
+			let match = xpath.evalFirst(json,'//Tracking/URL');
 			expect(match._.trim()).to.equal("http://serverland.net/ad/start");
 		});
 
 		it("returns the text of the found node when fetch=true", function() {
-			var match = xpath.evalFirst(json,'//Tracking/URL',true);
+			let match = xpath.evalFirst(json,'//Tracking/URL',true);
 			expect(match.trim()).to.equal("http://serverland.net/ad/start");
 		});
 
 		it("returns the property of the found node when fetch='name'", function() {
-			var match = xpath.evalFirst(json,'//Tracking/URL','id');
+			let match = xpath.evalFirst(json,'//Tracking/URL','id');
 			expect(match).to.equal("number0");
 		});
 	});
@@ -139,7 +139,7 @@ describe("xpath", function() {
 		});
 
 		it("matches Vast1Ad searches", function() {
-			var matches = xpath.find(json,".//Tracking[@event='start']/URL");
+			let matches = xpath.find(json,".//Tracking[@event='start']/URL");
 			expect(matches.length).to.equal(1);
 			expect(xpath.jsonText(matches[0]).trim()).to.equal("http://serverland.net/ad/start");
 		});

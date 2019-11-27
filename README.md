@@ -35,3 +35,25 @@ xml2js.parseString('<root><element id="15">target</element></root>', function(er
 ```
 
 See test cases for more examples.
+
+XPath Support
+=============
+
+Only a subset of [the XPath standard](https://www.w3.org/TR/1999/REC-xpath-19991116/) is currently supported:
+
+- [X] Descendent selectors (`//h`, `/parent/offspring`).
+- [X] Attribute selectors (`/parent/offspring[@attribute='value']`).
+- [X] Tag value selectors (`/parent[offspring='value']`).
+
+Notable unsupported features (there are many more, but these are some I'd like
+to support at some point!):
+- [ ] Order predicate (`/parent/offspring[1]`)
+- [ ] Arithmetic comparisons (`/parent/offspring[@attribute > 12.5]`)
+- [ ] Boolean logic (`/parent/offspring[@attribute1 or @attribute2]`)
+- [ ] Axes (`/parent/following-sibling::offspring`)
+- [ ] Functions ( `last()`, `starts-with()`, `contains()`, `text()`, etc).
+
+
+https://www.w3.org/TR/1999/REC-xpath-19991116
+
+https://codebeautify.org/Xpath-Tester

@@ -39,14 +39,13 @@ See test cases for more examples.
 XPath Support
 =============
 
-Only a subset of [the XPath standard](https://www.w3.org/TR/1999/REC-xpath-19991116/) is currently supported:
+This project supports a subset of the [the XPath standard](https://www.w3.org/TR/1999/REC-xpath-19991116/):
 
 - [X] Descendent selectors (`//h`, `/parent/offspring`).
 - [X] Attribute selectors (`/parent/offspring[@attribute='value']`).
 - [X] Tag value selectors (`/parent[offspring='value']`).
 
-Notable unsupported features (there are many more, but these are some I'd like
-to support at some point!):
+Notable unsupported features:
 - [ ] Order predicate (`/parent/offspring[1]`)
 - [ ] Arithmetic comparisons (`/parent/offspring[@attribute > 12.5]`)
 - [ ] Boolean logic (`/parent/offspring[@attribute1 or @attribute2]`)

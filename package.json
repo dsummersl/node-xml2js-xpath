@@ -21,25 +21,26 @@
   },
   "scripts": {
     "prepublish": "babel src/xpath.js > xpath.js",
-    "test": "nyc mocha src/**/*.test.js"
+    "test": "mocha src/**/*.test.js",
+    "coverage": "nyc mocha src/**/*.test.js"
   },
   "dependencies": {
-    "lodash": "^4.17.15"
+    "lodash": "^4.17.21"
   },
   "devDependencies": {
-    "@babel/cli": "^7.4.4",
-    "@babel/core": "^7.4.4",
-    "@babel/plugin-transform-runtime": "^7.4.4",
-    "@babel/preset-env": "^7.4.4",
-    "@babel/register": "^7.4.4",
-    "@babel/runtime": "^7.4.4",
+    "@babel/cli": "^7.13.10",
+    "@babel/core": "^7.13.15",
+    "@babel/plugin-transform-runtime": "^7.13.15",
+    "@babel/preset-env": "^7.13.15",
+    "@babel/register": "^7.13.10",
+    "@babel/runtime": "^7.13.10",
     "@istanbuljs/nyc-config-babel": "^2.1.1",
-    "babel-plugin-istanbul": "^5.1.4",
-    "chai": "^4.2.0",
-    "eslint": "^6.6.0",
-    "mocha": "^6.1.4",
+    "babel-plugin-istanbul": "^6.0.0",
+    "chai": "^4.3.4",
+    "eslint": "^7.24.0",
+    "mocha": "^8.3.2",
     "nyc": "latest",
-    "xml2js": "^0.4.19"
+    "xml2js": "^0.4.23"
   },
   "typings": "xml2js-xpath",
   "babel": {
@@ -63,8 +64,5 @@
         ]
       }
     }
-  },
-  "nyc": {
-    "extends": "@istanbul/nyc-config-babel"
   }
 }

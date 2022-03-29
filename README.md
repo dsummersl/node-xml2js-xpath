@@ -44,9 +44,9 @@ This project supports a subset of the [the XPath standard](https://www.w3.org/TR
 - [X] Descendent selectors (`//h`, `/parent/offspring`).
 - [X] Attribute selectors (`/parent/offspring[@attribute='value']`).
 - [X] Tag value selectors (`/parent[offspring='value']`).
+- [X] Order predicate (`/parent/offspring[1]`)
 
 Notable unsupported features:
-- [ ] Order predicate (`/parent/offspring[1]`)
 - [ ] Arithmetic comparisons (`/parent/offspring[@attribute > 12.5]`)
 - [ ] Boolean logic (`/parent/offspring[@attribute1 or @attribute2]`)
 - [ ] Axes (`/parent/following-sibling::offspring`)

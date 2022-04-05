@@ -11,6 +11,7 @@ const NAME_CHAR = `${NAME_START_CHAR}.0-9·\u0300-\u036F\u203F-\u2040-`
 const TAG_NAME = `[${NAME_START_CHAR}][${NAME_CHAR}]*`
 const TAG_AND_PROP = `(${TAG_NAME})\\[@([\\w:]+)='([^']+)'\\]`
 const TAG_AND_CHILD = `(${TAG_NAME})\\[([\\w:]+)='([^']+)'\\]`
+const TAG_AND_POSITION = `(${TAG_NAME})\\[([\\d]+)\\]`
 
 // Given a JSON document returned by xml2js (with _ and $ keys), return the
 // combined text value of the tags.
@@ -174,7 +175,7 @@ let find = function(json, path) {
 	}
 
 	// match //Element
-	match = extractAllKeys(json, path, new RegExp(`^//([${NAME_START_CHAR}][${NAME_CHAR}]*)`));
+	match = extractAllKeys(json, path, new RegExp(`^//(${TAG_NAME})`));
 	if (match) {
 		return match;
 	}
@@ -189,6 +190,19 @@ let find = function(json, path) {
 			return results
 		} else {
 			return find(json[node], path.replace(`/${node}/`, "/"))
+		}
+	}
+
+	// match /Element[\d+] (with numeric positional predicate)
+	match = path.match(`^\\/${TAG_AND_POSITION}`);
+	if (match) {
+		const node = match[1]
+		const position = +match[2]  // xpath is one-based indexed, js-array is zero-based!
+		let newPath = path.replace(`/${node}[${position}]`, "");
+		if (_.has(json, node)) {
+			if (_.isArray(json[node])) {
+				return json[node][position - 1] ? find(json[node][position - 1], newPath) : []
+			}
 		}
 	}
 

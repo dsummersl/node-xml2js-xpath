@@ -138,6 +138,60 @@ describe("xpath", function() {
 			});
 		});
 
+		it("can find /\\w+[\\d+] patterns", function(done) {
+			parseString('<books><book><author>Tom</author><genre>Science</genre></book><book><author>Mike</author><genre>Politics</genre></book></books>', function(err, json) {
+				const res = xpath.find(json,"/books/book[1]");
+				expect(res.length).to.equal(1);
+				done();
+			});
+		});
+
+		it("can find /\\w+[\\d+]/\\w+ patterns", function(done) {
+			parseString('<books><book><author>Tom</author><genre>Science</genre></book><book><author>Mike</author><genre>Politics</genre></book></books>', function(err, json) {
+				expect(xpath.find(json,"/books/book[1]/author")).to.deep.equal(["Tom"]);
+				done();
+			});
+		});
+
+		it("can find //\\w+[\\d+] patterns", function(done) {
+			parseString('<store><books><book><author>Tom</author><genre>Science</genre></book><book><author>Mike</author><genre>Politics</genre></book></books></store>', function(err, json) {
+				const res = xpath.find(json,"//books/book[1]");
+				expect(res.length).to.equal(1);
+				done();
+			});
+		});
+
+		it("can find //\\w+[1] on non-array", function(done) {
+			parseString('<store><books><book><author>Tom</author><genre>Science</genre></book></books></store>', function(err, json) {
+				const res = xpath.find(json,"//books/book[1]");
+				expect(res.length).to.equal(1);
+				done();
+			});
+		});
+
+		it("can not find //\\w+[\\d+] out-of-bounds on non-array", function(done) {
+			parseString('<store><books><book><author>Tom</author><genre>Science</genre></book></books></store>', function(err, json) {
+				const res = xpath.find(json,"//books/book[99]");
+				expect(res.length).to.equal(0);
+				done();
+			});
+		});
+
+		it("can find //\\w+[\\d+]/\\w+ patterns", function(done) {
+			parseString('<store><books><book><author>Tom</author><genre>Science</genre></book><book><author>Mike</author><genre>Politics</genre></book></books></store>', function(err, json) {
+				expect(xpath.find(json,"//books/book[1]/author")).to.deep.equal(["Tom"]);
+				done();
+			});
+		});
+
+		it("can not find //\\w+[\\d+] for index out of bounds", function(done) {
+			parseString('<store><books><book><author>Tom</author><genre>Science</genre></book><book><author>Mike</author><genre>Politics</genre></book></books></store>', function(err, json) {
+				const res = xpath.find(json,"//books/book[99]");
+				expect(res.length).to.equal(0);
+				done();
+			});
+		});
+
 		it("matches Vast1Ad searches", function() {
 			let matches = xpath.find(json,".//Tracking[@event='start']/URL");
 			expect(matches.length).to.equal(1);

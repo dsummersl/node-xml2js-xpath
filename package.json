@@ -34,10 +34,10 @@
     "@babel/preset-env": "^7.13.15",
     "@babel/register": "^7.13.10",
     "@babel/runtime": "^7.13.10",
-    "@istanbuljs/nyc-config-babel": "^2.1.1",
+    "@istanbuljs/nyc-config-babel": "^3.0.0",
     "babel-plugin-istanbul": "^6.0.0",
     "chai": "^4.3.4",
-    "eslint": "^7.24.0",
+    "eslint": "^8.14.0",
     "mocha": "^9.2.2",
     "nyc": "latest",
     "xml2js": "^0.4.23"

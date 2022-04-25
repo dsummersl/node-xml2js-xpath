@@ -1,6 +1,6 @@
 {
   "name": "xml2js-xpath",
-  "version": "0.12.0",
+  "version": "0.13.0",
   "description": "Search xml2js JSON documents with XPath query strings.",
   "keywords": [
     "xml2js",
@@ -38,7 +38,7 @@
     "babel-plugin-istanbul": "^6.0.0",
     "chai": "^4.3.4",
     "eslint": "^7.24.0",
-    "mocha": "^8.3.2",
+    "mocha": "^9.2.2",
     "nyc": "latest",
     "xml2js": "^0.4.23"
   },
